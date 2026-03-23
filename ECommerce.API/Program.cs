@@ -12,6 +12,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // Add services to the container.
 builder.Services.AddDbContext<ECommerceDbContext>(options => 
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -138,6 +149,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("ReactPolicy");
 
 app.UseAuthentication();
 
